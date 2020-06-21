@@ -7,6 +7,7 @@
     <groupId>org.example</groupId>
     <artifactId>xo_server</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -14,6 +15,5 @@
             <version>1.18.10</version>
         </dependency>
     </dependencies>
-
 
 </project>
