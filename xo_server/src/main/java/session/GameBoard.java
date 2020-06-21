@@ -13,10 +13,14 @@ public class GameBoard implements Serializable {
     public GameBoard() {
         whoseMove = WhoseMove.getRandomPlayer();
         cells = new Cell[3][3];
-        for (Cell[] c : cells) {
-            for (Cell curr : c) {
-                curr = new Cell(Status.X);
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                cells[i][j] = Cell.builder()
+                                  .status(Status.NONE)
+                                  .build();
             }
         }
     }
+
+
 }
