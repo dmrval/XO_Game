@@ -21,6 +21,4 @@ public class GameBoard implements Serializable {
             }
         }
     }
-
-
 }

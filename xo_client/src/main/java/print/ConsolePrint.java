@@ -1,11 +1,13 @@
 package print;
 
+import lombok.extern.slf4j.Slf4j;
 import session.Cell;
 import session.GameBoard;
 
+@Slf4j
 public class ConsolePrint {
     public static void printToConsole(GameBoard gameBoard) {
-        System.out.println("Первый ход у " + gameBoard.getWhoseMove());
+        log.info("Первый ход у " + gameBoard.getWhoseMove());
         Cell[][] cells = gameBoard.getCells();
         for (Cell[] cellArray : cells) {
             for (Cell curr : cellArray) {

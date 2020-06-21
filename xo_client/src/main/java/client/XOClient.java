@@ -2,8 +2,8 @@ package client;
 
 import config.Cfg;
 import decoder.DataHelper;
-import lombok.Data;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import print.ConsolePrint;
 import session.GameBoard;
 
@@ -11,26 +11,39 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+@Slf4j
 public class XOClient extends Thread {
     private DatagramSocket socket;
+    private GameBoard gameBoard;
 
     @SneakyThrows
     @Override
     public void run() {
-        System.out.println("Старт клиента --->");
+        log.info("Старт клиента");
         socket = new DatagramSocket();
-            System.out.println("Старт сессии клиента: ");
-            GameBoard gameBoard = new GameBoard();
-            byte[] boardByteArray = DataHelper.serialize(gameBoard);
-            DatagramPacket dp = new DatagramPacket(boardByteArray, boardByteArray.length, InetAddress.getByName(Cfg.HOST), Cfg.PORT);
-            socket.send(dp);
-            byte[] buffer = new byte[Cfg.BUFFER];
-            DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-            socket.receive(reply);
-            byte[] data = reply.getData();
-        GameBoard gameBoard1 = (GameBoard) DataHelper.deserialize(data);
+        log.info("Старт сессии клиента: ");
+        gameBoard = new GameBoard();
+        log.info("Отправка новой доски серверу: ");
+        pushData(socket, gameBoard);
+        log.info("Доска отправлена: ");
+        GameBoard gameBoard1 = pullData(socket);
         ConsolePrint.printToConsole(gameBoard1);
-//            System.out.println("Сервер: " + reply.getAddress().getHostAddress() + ", порт: " + reply.getPort() + ", получил: " + s);
+    }
 
+    @SneakyThrows
+    private GameBoard pullData(DatagramSocket socket) {
+        byte[] buffer = new byte[Cfg.BUFFER];
+        DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+        socket.receive(reply);
+        byte[] dataResult = reply.getData();
+        return (GameBoard) DataHelper.deserialize(dataResult);
+    }
+
+    @SneakyThrows
+    private void pushData(DatagramSocket socket, GameBoard gameBoard) {
+        byte[] data = DataHelper.serialize(gameBoard);
+        DatagramPacket datagramPacket =
+                new DatagramPacket(data, data.length, InetAddress.getByName(Cfg.HOST), Cfg.PORT);
+        socket.send(datagramPacket);
     }
 }
