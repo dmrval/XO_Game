@@ -9,6 +9,8 @@ import session.Cell;
 import session.GameBoard;
 import session.Status;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,47 +19,49 @@ import java.net.InetAddress;
 public class XOServer extends Thread {
 
     private DatagramSocket socket;
+    private DatagramPacket packet;
+    private byte[] buf;
     private GameBoard gameBoard;
+
+    private BufferedReader cin;
 
     @SneakyThrows
     public XOServer() {
-        socket = new DatagramSocket(Cfg.PORT);
+        buf = new byte[Cfg.BUFFER];
+        cin = new BufferedReader(new InputStreamReader(System.in));
+
     }
 
+    @SneakyThrows
     public void run() {
-        log.info("Старт сервера");
-        log.info("Ожидаем данные...");
-        gameBoard = pullData(socket);
-        log.info("Сервер получил !");
-        ConsolePrint.printToConsole(gameBoard);
-        testStep(gameBoard);
-        log.info("Доска изменена");
-        log.info("Отправка данных клиенту");
-        pushData(socket, gameBoard);
-    }
-
-    @SneakyThrows
-    private GameBoard pullData(DatagramSocket socket) {
+        socket = new DatagramSocket(Cfg.PORT);
         byte[] buffer = new byte[Cfg.BUFFER];
-        DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-        socket.receive(reply);
-        byte[] dataResult = reply.getData();
-        return (GameBoard) DataHelper.deserialize(dataResult);
+        packet = new DatagramPacket(buffer, buffer.length);
+        log.info("Ожидаем данные...");
+        int i = 0;
+        while (true) {
+            pullData();
+            log.info("Сервер получил " + i++ + " ход");
+            ConsolePrint.printToConsole(gameBoard);
+            // TODO: 23.06.2020 тут ходит SERVER
+            cin.readLine();
+            //
+            pushData();
+            log.info("Сервер отправил " + i++ + "ход");
+        }
+    }
+
+
+    @SneakyThrows
+    private void pullData() {
+        socket.receive(packet);
+        gameBoard = (GameBoard) DataHelper.deserialize(packet.getData());
     }
 
     @SneakyThrows
-    private void pushData(DatagramSocket socket, GameBoard gameBoard) {
-        byte[] data = DataHelper.serialize(gameBoard);
-        DatagramPacket datagramPacket =
-                new DatagramPacket(data, data.length, InetAddress.getByName(Cfg.HOST), Cfg.PORT);
-        socket.send(datagramPacket);
-    }
-
-    public static void testStep(GameBoard gameBoard) {
-        for (Cell[] cellArr : gameBoard.getCells()) {
-            for (Cell curr : cellArr) {
-                curr.setStatus(Status.O);
-            }
-        }
+    private void pushData() {
+        buf = DataHelper.serialize(gameBoard);
+        packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
+        socket.send(packet);
     }
 }
