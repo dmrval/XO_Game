@@ -28,7 +28,6 @@ public class XOClient extends Thread implements Winnable {
     private GameBoard gameBoard;
     private int gameBoardSize;
     private FullLine fullLine;
-    private boolean runFlag = true;
 
     private BufferedReader cin;
 
@@ -47,7 +46,7 @@ public class XOClient extends Thread implements Winnable {
         socket = new DatagramSocket();
         int i = 0;
         gameBoard = new GameBoard(gameBoardSize);
-        while (runFlag) {
+        while (true) {
             log.info("Введите сообщение серверу: ");
 
             //+++++ Ход клиента начало
@@ -63,7 +62,6 @@ public class XOClient extends Thread implements Winnable {
             }
             gameBoard.setWhoseMove(WhoseMove.SERVER);
             //+++++ Ход клиента конец
-
 
             pushData();
             log.info("Клиент отправил " + i++ + "ход");
