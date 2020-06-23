@@ -37,7 +37,7 @@ public class XOClient extends Thread {
     public void run() {
         socket = new DatagramSocket();
         int i = 0;
-        gameBoard = new GameBoard();
+        gameBoard = new GameBoard(10);
         while (true) {
             log.info("Введите сообщение серверу: ");
             //TODO: 23.06.2020 тут ходит CLIENT
