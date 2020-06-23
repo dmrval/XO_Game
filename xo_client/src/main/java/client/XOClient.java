@@ -1,11 +1,17 @@
 package client;
 
+import static session.LineType.NO_FULL_LINES;
+
 import config.Cfg;
 import decoder.DataHelper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import print.ConsolePrint;
+import session.Cell;
+import session.FullLine;
 import session.GameBoard;
+import session.Status;
+import util.WhoseMove;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,22 +20,25 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 @Slf4j
-public class XOClient extends Thread {
+public class XOClient extends Thread implements Winnable {
 
     private DatagramSocket socket;
     private DatagramPacket packet;
     private byte[] buf;
     private GameBoard gameBoard;
-    private int gameBoardSize = 3;
+    private int gameBoardSize;
+    private FullLine fullLine;
+    private boolean runFlag = true;
 
     private BufferedReader cin;
 
 
-
     @SneakyThrows
-    public XOClient (){
+    public XOClient() {
         buf = new byte[Cfg.BUFFER];
         cin = new BufferedReader(new InputStreamReader(System.in));
+        fullLine = new FullLine();
+        gameBoardSize = 3;
     }
 
     @SneakyThrows
@@ -37,21 +46,41 @@ public class XOClient extends Thread {
     public void run() {
         socket = new DatagramSocket();
         int i = 0;
-        gameBoard = new GameBoard(10);
-        while (true) {
+        gameBoard = new GameBoard(gameBoardSize);
+        while (runFlag) {
             log.info("Введите сообщение серверу: ");
+
+            //+++++ Ход клиента начало
             //TODO: 23.06.2020 тут ходит CLIENT
             String s = cin.readLine();
-            //
+//            setTestWin(gameBoard);
+            checkWinnerInGameBoard();
+            if (isWin()) {
+                gameBoard.setWinner(WhoseMove.CLIENT);
+                ConsolePrint.printActiveWinner(gameBoard, fullLine);
+                pushData();
+                break;
+            }
+            gameBoard.setWhoseMove(WhoseMove.SERVER);
+            //+++++ Ход клиента конец
+
+
             pushData();
             log.info("Клиент отправил " + i++ + "ход");
             pullData();
+            if (gameBoard.getWinner() != null) {
+                log.info("Ты просрал игру!!!");
+                log.info("Победитель ---> " + gameBoard.getWinner() + "!!!");
+                break;
+            }
             log.info("Клиент получил " + i++ + " ход");
-            ConsolePrint.printToConsole(gameBoard);
+            ConsolePrint.printGameBoard(gameBoard);
         }
     }
 
-
+    private void checkWinnerInGameBoard() {
+        fullLine = gameBoard.checkField();
+    }
 
     @SneakyThrows
     private void pullData() {
@@ -67,5 +96,25 @@ public class XOClient extends Thread {
         buf = DataHelper.serialize(gameBoard);
         packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(Cfg.HOST), Cfg.PORT);
         socket.send(packet);
+    }
+
+    @Override
+    public boolean isWin() {
+        if (fullLine.getLineType() != NO_FULL_LINES) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void setTestWin(GameBoard gameBoard) {
+        Cell[][] cells = gameBoard.getCells();
+        for (int i = 1; i < 2; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                cells[i][j] = Cell.builder()
+                                  .status(Status.X)
+                                  .build();
+            }
+        }
     }
 }

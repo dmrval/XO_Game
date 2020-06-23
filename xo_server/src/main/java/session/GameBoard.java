@@ -10,9 +10,10 @@ import java.io.Serializable;
 public class GameBoard implements Serializable {
     private Cell[][] cells;
     private WhoseMove whoseMove;
+    private WhoseMove winner = null;
 
     public GameBoard(int size) {
-        whoseMove = WhoseMove.getRandomPlayer();
+        whoseMove = WhoseMove.CLIENT;
         cells = new Cell[size][size];
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {

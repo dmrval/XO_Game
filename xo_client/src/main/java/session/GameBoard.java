@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class GameBoard implements Serializable {
     private Cell[][] cells;
     private WhoseMove whoseMove;
+    private WhoseMove winner = null;
 
     public GameBoard(int size) {
         whoseMove = WhoseMove.getRandomPlayer();
