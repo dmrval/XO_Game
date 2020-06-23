@@ -20,6 +20,7 @@ public class XOClient extends Thread {
     private DatagramPacket packet;
     private byte[] buf;
     private GameBoard gameBoard;
+    private int gameBoardSize = 3;
 
     private BufferedReader cin;
 
