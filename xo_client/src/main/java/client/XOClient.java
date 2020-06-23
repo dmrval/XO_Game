@@ -59,7 +59,7 @@ public class XOClient extends Thread implements Winnable {
             }
             gameBoard.setWhoseMove(WhoseMove.SERVER);
             pushData();
-            log.info("Клиент отправил " + i++ + "ход");
+            log.info("Клиент отправил " + i++ + " ход");
             pullData();
 
             if (isLose()) {
@@ -75,7 +75,9 @@ public class XOClient extends Thread implements Winnable {
     public boolean isWin() {
         checkWinnerInGameBoard();
         if (fullLine.getLineType() != NO_FULL_LINES) {
-            gameBoard.setWinner(WhoseMove.CLIENT);
+            // TODO: 24.06.2020 тут надо продумать как записывать знак победителя
+            gameBoard.getWinnerMan().setWinnerMark(Status.X);
+            gameBoard.getWinnerMan().setWinner(WhoseMove.CLIENT);
             ConsolePrint.printActiveWinner(gameBoard, fullLine);
             pushData();
             return true;
@@ -86,9 +88,8 @@ public class XOClient extends Thread implements Winnable {
 
     @Override
     public boolean isLose() {
-        if (gameBoard.getWinner() != null) {
-            log.info("Ты просрал игру!!!");
-            log.info("Победитель ---> " + gameBoard.getWinner() + "!!!");
+        if (gameBoard.getWinnerMan().getWinner() != null) {
+            ConsolePrint.printActiveLoser(gameBoard);
             return true;
         } else {
             return false;
@@ -113,5 +114,16 @@ public class XOClient extends Thread implements Winnable {
         buf = DataHelper.serialize(gameBoard);
         packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(Cfg.HOST), Cfg.PORT);
         socket.send(packet);
+    }
+
+    private void setTestWin(GameBoard gameBoard) {
+        Cell[][] cells = gameBoard.getCells();
+        for (int i = 1; i < 2; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                cells[i][j] = Cell.builder()
+                                  .status(Status.X)
+                                  .build();
+            }
+        }
     }
 }

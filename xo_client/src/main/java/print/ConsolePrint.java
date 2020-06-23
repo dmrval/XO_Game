@@ -19,7 +19,13 @@ public class ConsolePrint {
     }
 
     public static void printActiveWinner(GameBoard gameBoard, FullLine fullLine) {
-        log.info("Победитель ---> " + gameBoard.getWinner() + "!!!");
+        log.info("Победитель ---> " + gameBoard.getWinnerMan().getWinner() + "!!!");
         log.info("Выйграл на " + fullLine.getLineType() + " " + fullLine.getPosition());
+    }
+
+    public static void printActiveLoser(GameBoard gameBoard) {
+        log.info("Ты просрал игру!!!");
+        log.info("Победитель ---> " + gameBoard.getWinnerMan().getWinner() +" со знаком "
+                + gameBoard.getWinnerMan().getWinnerMark() + " !!!");
     }
 }
