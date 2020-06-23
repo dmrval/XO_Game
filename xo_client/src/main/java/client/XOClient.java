@@ -51,28 +51,47 @@ public class XOClient extends Thread implements Winnable {
 
             //+++++ Ход клиента начало
             //TODO: 23.06.2020 тут ходит CLIENT
-            String s = cin.readLine();
-//            setTestWin(gameBoard);
-            checkWinnerInGameBoard();
+            cin.readLine();
+            //+++++ Ход клиента конец
+
             if (isWin()) {
-                gameBoard.setWinner(WhoseMove.CLIENT);
-                ConsolePrint.printActiveWinner(gameBoard, fullLine);
-                pushData();
                 break;
             }
             gameBoard.setWhoseMove(WhoseMove.SERVER);
-            //+++++ Ход клиента конец
-
             pushData();
             log.info("Клиент отправил " + i++ + "ход");
             pullData();
-            if (gameBoard.getWinner() != null) {
-                log.info("Ты просрал игру!!!");
-                log.info("Победитель ---> " + gameBoard.getWinner() + "!!!");
+
+            if (isLose()) {
                 break;
             }
+
             log.info("Клиент получил " + i++ + " ход");
             ConsolePrint.printGameBoard(gameBoard);
+        }
+    }
+
+    @Override
+    public boolean isWin() {
+        checkWinnerInGameBoard();
+        if (fullLine.getLineType() != NO_FULL_LINES) {
+            gameBoard.setWinner(WhoseMove.CLIENT);
+            ConsolePrint.printActiveWinner(gameBoard, fullLine);
+            pushData();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isLose() {
+        if (gameBoard.getWinner() != null) {
+            log.info("Ты просрал игру!!!");
+            log.info("Победитель ---> " + gameBoard.getWinner() + "!!!");
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -94,25 +113,5 @@ public class XOClient extends Thread implements Winnable {
         buf = DataHelper.serialize(gameBoard);
         packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(Cfg.HOST), Cfg.PORT);
         socket.send(packet);
-    }
-
-    @Override
-    public boolean isWin() {
-        if (fullLine.getLineType() != NO_FULL_LINES) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void setTestWin(GameBoard gameBoard) {
-        Cell[][] cells = gameBoard.getCells();
-        for (int i = 1; i < 2; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                cells[i][j] = Cell.builder()
-                                  .status(Status.X)
-                                  .build();
-            }
-        }
     }
 }

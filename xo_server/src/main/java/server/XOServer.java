@@ -44,28 +44,21 @@ public class XOServer extends Thread implements Winnable {
         int i = 0;
         while (true) {
             pullData();
-            if (gameBoard.getWinner() != null) {
-                log.info("Ты просрал игру!!!");
-                break;
-            }
             log.info("Сервер получил " + i++ + " ход");
             ConsolePrint.printGameBoard(gameBoard);
+            if (isLose()) {
+                break;
+            }
 
             //+++++ Ход сервера начало
             // TODO: 23.06.2020 тут ходит SERVER
             cin.readLine();
-            setTestWin(gameBoard);
-            checkWinnerInGameBoard();
+            //+++++ Ход сервера конец
+
             if (isWin()) {
-                gameBoard.setWinner(WhoseMove.SERVER);
-                ConsolePrint.printActiveWinner(gameBoard, fullLine);
-                pushData();
                 break;
             }
             gameBoard.setWhoseMove(WhoseMove.CLIENT);
-            //
-            //+++++ Ход сервера конец
-
             pushData();
             log.info("Сервер отправил " + i++ + "ход");
         }
@@ -77,7 +70,22 @@ public class XOServer extends Thread implements Winnable {
 
     @Override
     public boolean isWin() {
+        checkWinnerInGameBoard();
         if (fullLine.getLineType() != NO_FULL_LINES) {
+            gameBoard.setWinner(WhoseMove.SERVER);
+            ConsolePrint.printActiveWinner(gameBoard, fullLine);
+            pushData();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isLose() {
+        if (gameBoard.getWinner() != null) {
+            log.info("Ты просрал игру!!!");
+            log.info("Победитель ---> " + gameBoard.getWinner() + "!!!");
             return true;
         } else {
             return false;
@@ -97,18 +105,4 @@ public class XOServer extends Thread implements Winnable {
         packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
         socket.send(packet);
     }
-
-
-    private void setTestWin(GameBoard gameBoard) {
-        Cell[][] cells = gameBoard.getCells();
-        for (int i = 1; i < 2; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                cells[i][j] = Cell.builder()
-                                  .status(Status.X)
-                                  .build();
-            }
-        }
-    }
-
-
 }
