@@ -29,6 +29,8 @@ public class XOServer extends Thread {
         log.info("Ожидаем данные...");
         gameBoard = pullData(socket);
         log.info("Сервер получил !");
+        log.info("Проверка доски:");
+        log.info(gameBoard.checkField().getLineType().toString()+gameBoard.checkField().getPosition());
         ConsolePrint.printToConsole(gameBoard);
         testStep(gameBoard);
         log.info("Доска изменена");

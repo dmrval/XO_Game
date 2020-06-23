@@ -15,6 +15,7 @@ import java.net.InetAddress;
 public class XOClient extends Thread {
     private DatagramSocket socket;
     private GameBoard gameBoard;
+    private int gameBoardSize = 3;
 
     @SneakyThrows
     @Override
@@ -22,7 +23,7 @@ public class XOClient extends Thread {
         log.info("Старт клиента");
         socket = new DatagramSocket();
         log.info("Старт сессии клиента: ");
-        gameBoard = new GameBoard();
+        gameBoard = new GameBoard(gameBoardSize);
         log.info("Отправка новой доски серверу: ");
         pushData(socket, gameBoard);
         log.info("Доска отправлена: ");
