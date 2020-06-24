@@ -111,14 +111,5 @@ public class XOServer extends Thread implements Winnable {
         socket.send(packet);
     }
 
-    private void setTestWin(GameBoard gameBoard) {
-        Cell[][] cells = gameBoard.getCells();
-        for (int i = 1; i < 2; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                cells[i][j] = Cell.builder()
-                                  .status(Status.X)
-                                  .build();
-            }
-        }
-    }
+
 }

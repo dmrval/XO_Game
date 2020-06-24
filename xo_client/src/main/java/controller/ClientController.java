@@ -1,10 +1,10 @@
 package controller;
 
+import client.XOClient;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
-import server.XOServer;
 import session.Cell;
 import session.Status;
 import util.WhoseMove;
@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 
 
 @Slf4j
-public class ServerController {
+public class ClientController {
 
-    private XOServer xoServer;
+    private XOClient xoClient;
 
     @FXML
     private Button cell00;
@@ -37,27 +37,27 @@ public class ServerController {
     @FXML
     private Button cell22;
 
-    public ServerController() {
+    public ClientController() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        xoServer = new XOServer();
-        executorService.execute(xoServer);
+        xoClient = new XOClient();
+        executorService.execute(xoClient);
     }
 
     private boolean yourStep() {
-        if (xoServer.getGameBoard() != null) {
+        if (xoClient.getGameBoard() != null) {
             repaintGameBoard();
-            if (xoServer.getGameBoard().getWhoseMove() != WhoseMove.SERVER) {
+            if (xoClient.getGameBoard().getWhoseMove() != WhoseMove.CLIENT) {
                 // TODO: 24.06.2020 тут не твой ход
                 log.info("НЕ ТВОЙ ХОД ШАКАЛ");
             }
-            return xoServer.getGameBoard().getWhoseMove() == WhoseMove.SERVER;
+            return xoClient.getGameBoard().getWhoseMove() == WhoseMove.CLIENT;
         } else {
             return false;
         }
     }
 
     private void repaintGameBoard() {
-        Cell[][] cells = xoServer.getGameBoard().getCells();
+        Cell[][] cells = xoClient.getGameBoard().getCells();
         cell00.setText(cells[0][0].getStatus().name());
         cell01.setText(cells[0][1].getStatus().name());
         cell02.setText(cells[0][2].getStatus().name());
@@ -70,122 +70,122 @@ public class ServerController {
     }
 
     private void responseStep() {
-        xoServer.getGameBoard().setWhoseMove(WhoseMove.CLIENT);
+        xoClient.getGameBoard().setWhoseMove(WhoseMove.SERVER);
     }
 
     public void setField00(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[0][0].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[0][0].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell00.setText("X");
-            xoServer.getGameBoard().getCells()[0][0].setStatus(Status.X);
+            cell00.setText("O");
+            xoClient.getGameBoard().getCells()[0][0].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField01(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[0][1].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[0][1].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell01.setText("X");
-            xoServer.getGameBoard().getCells()[0][1].setStatus(Status.X);
+            cell01.setText("O");
+            xoClient.getGameBoard().getCells()[0][1].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField02(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[0][2].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[0][2].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell02.setText("X");
-            xoServer.getGameBoard().getCells()[0][2].setStatus(Status.X);
+            cell02.setText("O");
+            xoClient.getGameBoard().getCells()[0][2].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField10(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[1][0].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[1][0].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell10.setText("X");
-            xoServer.getGameBoard().getCells()[1][0].setStatus(Status.X);
+            cell10.setText("O");
+            xoClient.getGameBoard().getCells()[1][0].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField11(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[1][1].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[1][1].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell11.setText("X");
-            xoServer.getGameBoard().getCells()[1][1].setStatus(Status.X);
+            cell11.setText("O");
+            xoClient.getGameBoard().getCells()[1][1].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField12(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[1][2].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[1][2].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell12.setText("X");
-            xoServer.getGameBoard().getCells()[1][2].setStatus(Status.X);
+            cell12.setText("O");
+            xoClient.getGameBoard().getCells()[1][2].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField20(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[2][0].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[2][0].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell20.setText("X");
-            xoServer.getGameBoard().getCells()[2][0].setStatus(Status.X);
+            cell20.setText("O");
+            xoClient.getGameBoard().getCells()[2][0].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField21(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[2][1].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[2][1].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell21.setText("X");
-            xoServer.getGameBoard().getCells()[2][1].setStatus(Status.X);
+            cell21.setText("O");
+            xoClient.getGameBoard().getCells()[2][1].setStatus(Status.O);
             responseStep();
         }
     }
 
     public void setField22(MouseEvent mouseEvent) {
         if (yourStep()) {
-            if (xoServer.getGameBoard().getCells()[2][2].getStatus()==Status.O) {
+            if (xoClient.getGameBoard().getCells()[2][2].getStatus()==Status.X) {
                 // TODO: 24.06.2020 нельзя тут сделать ход
                 log.info("ТУТ СТОИТ знак противника");
                 return;
             }
-            cell22.setText("X");
-            xoServer.getGameBoard().getCells()[2][2].setStatus(Status.X);
+            cell22.setText("O");
+            xoClient.getGameBoard().getCells()[2][2].setStatus(Status.O);
             responseStep();
         }
     }

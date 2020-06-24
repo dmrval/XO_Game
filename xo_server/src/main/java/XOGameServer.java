@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.apache.log4j.BasicConfigurator;
 
-public class XOGame extends Application {
+public class XOGameServer extends Application {
     private Stage primaryStage;
     private AnchorPane rootLayout;
 
@@ -20,7 +20,7 @@ public class XOGame extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("XO Game");
+        this.primaryStage.setTitle("XO Game - Server");
         initRootLayout();
     }
 
@@ -33,7 +33,7 @@ public class XOGame extends Application {
     @SneakyThrows
     public void initRootLayout() {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(XOGame.class.getResource("MainView.fxml"));
+        loader.setLocation(XOGameServer.class.getResource("MainView.fxml"));
         System.out.println(loader.getLocation());
         rootLayout = (AnchorPane) loader.load();
 
