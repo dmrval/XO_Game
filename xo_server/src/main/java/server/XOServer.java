@@ -4,6 +4,7 @@ import static session.LineType.NO_FULL_LINES;
 
 import config.Cfg;
 import decoder.DataHelper;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import print.ConsolePrint;
@@ -19,6 +20,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 @Slf4j
+@Getter
 public class XOServer extends Thread implements Winnable {
 
     private DatagramSocket socket;
@@ -53,7 +55,8 @@ public class XOServer extends Thread implements Winnable {
             //+++++ Ход сервера начало
             // TODO: 23.06.2020 тут ходит SERVER
             cin.readLine();
-            setTestWin(gameBoard);
+
+//            setTestWin(gameBoard);
             //+++++ Ход сервера конец
 
             if (isWin()) {

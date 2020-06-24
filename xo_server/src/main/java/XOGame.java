@@ -5,14 +5,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.apache.log4j.BasicConfigurator;
-import server.XOServer;
 
 public class XOGame extends Application {
     private Stage primaryStage;
     private AnchorPane rootLayout;
 
-    public static void main(String[] args) {launch(args);
+    @SneakyThrows
+    public static void main(String[] args) {
+        BasicConfigurator.configure();
+        launch(args);
     }
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -21,21 +24,28 @@ public class XOGame extends Application {
         initRootLayout();
     }
 
-    @SneakyThrows
-    public void initRootLayout() {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(XOGame.class.getResource("MainView.fxml"));
-        System.out.println(loader.getLocation());
-            rootLayout = (AnchorPane) loader.load();
-
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        System.exit(0);
     }
 
+    @SneakyThrows
+    public void initRootLayout() {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(XOGame.class.getResource("MainView.fxml"));
+        System.out.println(loader.getLocation());
+        rootLayout = (AnchorPane) loader.load();
+
+        Scene scene = new Scene(rootLayout);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
 
     public Stage getPrimaryStage() {
         return primaryStage;
     }
+
+
 }
