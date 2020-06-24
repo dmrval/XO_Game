@@ -52,6 +52,7 @@ public class XOClient extends Thread implements Winnable {
             //+++++ Ход клиента начало
             //TODO: 23.06.2020 тут ходит CLIENT
             cin.readLine();
+            setTestWin(gameBoard);
             //+++++ Ход клиента конец
 
             if (isWin()) {
@@ -118,10 +119,10 @@ public class XOClient extends Thread implements Winnable {
 
     private void setTestWin(GameBoard gameBoard) {
         Cell[][] cells = gameBoard.getCells();
-        for (int i = 1; i < 2; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
+        for (int i = 2; i < 3; i++) {
+            for (int j = 1; j < cells[i].length; j++) {
                 cells[i][j] = Cell.builder()
-                                  .status(Status.X)
+                                  .status(Status.O)
                                   .build();
             }
         }
