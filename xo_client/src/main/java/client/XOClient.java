@@ -3,6 +3,7 @@ package client;
 import static session.LineType.NO_FULL_LINES;
 
 import config.Cfg;
+import controller.ClientController;
 import decoder.DataHelper;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -30,12 +31,13 @@ public class XOClient extends Thread implements Winnable {
     private GameBoard gameBoard;
     private int gameBoardSize;
     private FullLine fullLine;
-
+    private ClientController controller;
     private BufferedReader cin;
 
 
     @SneakyThrows
-    public XOClient() {
+    public XOClient(ClientController controller) {
+        this.controller = controller;
         buf = new byte[Cfg.BUFFER];
         cin = new BufferedReader(new InputStreamReader(System.in));
         fullLine = new FullLine();
@@ -56,18 +58,18 @@ public class XOClient extends Thread implements Winnable {
             cin.readLine();
             //+++++ Ход клиента конец
 
-            if (isWin()) {
-                break;
-            }
             gameBoard.setWhoseMove(WhoseMove.SERVER);
             pushData();
             log.info("Клиент отправил " + i++ + " ход");
-            pullData();
 
-            if (isLose()) {
+            if (isWin()) {
                 break;
             }
+            pullData();
 
+            if (isWin()) {
+                break;
+            }
             log.info("Клиент получил " + i++ + " ход");
             ConsolePrint.printGameBoard(gameBoard);
         }
@@ -77,21 +79,10 @@ public class XOClient extends Thread implements Winnable {
     public boolean isWin() {
         checkWinnerInGameBoard();
         if (fullLine.getLineType() != NO_FULL_LINES) {
-            // TODO: 24.06.2020 тут надо продумать как записывать знак победителя
-            gameBoard.getWinnerMan().setWinnerMark(Status.X);
-            gameBoard.getWinnerMan().setWinner(WhoseMove.CLIENT);
+            gameBoard.getWinnerMan().setWinnerMark(fullLine.getWinMark());
+            gameBoard.getWinnerMan().setWinner(gameBoard.getWinnerMan().getWinnerMark().equals(Status.O) ? WhoseMove.CLIENT : WhoseMove.SERVER);
             ConsolePrint.printActiveWinner(gameBoard, fullLine);
             pushData();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isLose() {
-        if (gameBoard.getWinnerMan().getWinner() != null) {
-            ConsolePrint.printActiveLoser(gameBoard);
             return true;
         } else {
             return false;

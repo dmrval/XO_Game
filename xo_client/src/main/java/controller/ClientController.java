@@ -39,7 +39,7 @@ public class ClientController {
 
     public ClientController() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        xoClient = new XOClient();
+        xoClient = new XOClient(this);
         executorService.execute(xoClient);
     }
 
@@ -56,7 +56,7 @@ public class ClientController {
         }
     }
 
-    private void repaintGameBoard() {
+    public void repaintGameBoard() {
         Cell[][] cells = xoClient.getGameBoard().getCells();
         cell00.setText(cells[0][0].getStatus().name());
         cell01.setText(cells[0][1].getStatus().name());

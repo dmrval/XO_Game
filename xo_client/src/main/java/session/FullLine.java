@@ -3,10 +3,12 @@ package session;
 public class FullLine {
     private LineType lineType;
     private int position;
+    private Status winMark;
 
-    public FullLine(LineType lineType, int position) {
+    public FullLine(LineType lineType, int position, Status winMark) {
         this.lineType = lineType;
         this.position = position;
+        this.winMark = winMark;
     }
 
     public FullLine() {
@@ -19,5 +21,9 @@ public class FullLine {
 
     public int getPosition() {
         return position;
+    }
+
+    public Status getWinMark() {
+        return winMark;
     }
 }

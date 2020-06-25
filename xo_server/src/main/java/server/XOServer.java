@@ -3,12 +3,12 @@ package server;
 import static session.LineType.NO_FULL_LINES;
 
 import config.Cfg;
+import controller.GameBoardController;
 import decoder.DataHelper;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import print.ConsolePrint;
-import session.Cell;
 import session.FullLine;
 import session.GameBoard;
 import session.Status;
@@ -30,6 +30,7 @@ public class XOServer extends Thread implements Winnable {
     private FullLine fullLine;
     private BufferedReader cin;
 
+
     @SneakyThrows
     public XOServer() {
         buf = new byte[Cfg.BUFFER];
@@ -48,10 +49,9 @@ public class XOServer extends Thread implements Winnable {
             pullData();
             log.info("Сервер получил " + i++ + " ход");
             ConsolePrint.printGameBoard(gameBoard);
-            if (isLose()) {
+            if (isWin()) {
                 break;
             }
-
             //+++++ Ход сервера начало
             // TODO: 23.06.2020 тут ходит SERVER
             cin.readLine();
@@ -59,11 +59,11 @@ public class XOServer extends Thread implements Winnable {
 //            setTestWin(gameBoard);
             //+++++ Ход сервера конец
 
+            gameBoard.setWhoseMove(WhoseMove.CLIENT);
+            pushData();
             if (isWin()) {
                 break;
             }
-            gameBoard.setWhoseMove(WhoseMove.CLIENT);
-            pushData();
             log.info("Сервер отправил " + i++ + "ход");
         }
     }
@@ -86,17 +86,6 @@ public class XOServer extends Thread implements Winnable {
             return false;
         }
     }
-
-    @Override
-    public boolean isLose() {
-        if (gameBoard.getWinnerMan().getWinner() != null) {
-            ConsolePrint.printActiveLoser(gameBoard);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 
     @SneakyThrows
     private void pullData() {

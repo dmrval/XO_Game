@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 
 @Slf4j
-public class ServerController {
+public class GameBoardController {
 
     private XOServer xoServer;
 
@@ -37,7 +37,7 @@ public class ServerController {
     @FXML
     private Button cell22;
 
-    public ServerController() {
+    public GameBoardController() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         xoServer = new XOServer();
         executorService.execute(xoServer);
@@ -48,7 +48,7 @@ public class ServerController {
             repaintGameBoard();
             if (xoServer.getGameBoard().getWhoseMove() != WhoseMove.SERVER) {
                 // TODO: 24.06.2020 тут не твой ход
-                log.info("НЕ ТВОЙ ХОД ШАКАЛ");
+                log.info("НЕ ТВОЙ ХОД");
             }
             return xoServer.getGameBoard().getWhoseMove() == WhoseMove.SERVER;
         } else {
@@ -56,7 +56,7 @@ public class ServerController {
         }
     }
 
-    private void repaintGameBoard() {
+    public void repaintGameBoard() {
         Cell[][] cells = xoServer.getGameBoard().getCells();
         cell00.setText(cells[0][0].getStatus().name());
         cell01.setText(cells[0][1].getStatus().name());

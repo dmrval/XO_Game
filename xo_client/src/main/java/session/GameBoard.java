@@ -5,8 +5,6 @@ import util.WhoseMove;
 
 import java.io.Serializable;
 
-//CHANGED: размер поля задаётся при инициализации
-//ADD: метод проверки игрового поля на выигрыш
 @Data
 public class GameBoard implements Serializable {
     private Cell[][] cells;
@@ -49,7 +47,7 @@ public class GameBoard implements Serializable {
                     continue outerLoop;
                 }
             }
-            return new FullLine(LineType.ROW, i);
+            return new FullLine(LineType.ROW, i, cells[i][0].getStatus());
         }
         return new FullLine();
     }
@@ -65,7 +63,7 @@ public class GameBoard implements Serializable {
                     continue outerLoop;
                 }
             }
-            return new FullLine(LineType.COL, j);
+            return new FullLine(LineType.COL, j, cells[0][j].getStatus());
         }
         return new FullLine();
     }
@@ -79,7 +77,7 @@ public class GameBoard implements Serializable {
                 break;
             }
             if(i==cells.length-2){
-                return new FullLine(LineType.DIAG, 1);
+                return new FullLine(LineType.DIAG, 1, cells[1][1].getStatus());
             }
         }
 
@@ -91,7 +89,7 @@ public class GameBoard implements Serializable {
                 break;
             }
             if(i==1){
-                return new FullLine(LineType.DIAG, 2);
+                return new FullLine(LineType.DIAG, 2, cells[1][1].getStatus());
             }
         }
         return new FullLine();

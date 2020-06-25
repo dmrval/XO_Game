@@ -18,6 +18,7 @@ public class XOGameServer extends Application {
 
 
     @Override
+    @SneakyThrows
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("XO Game - Server");
@@ -40,11 +41,6 @@ public class XOGameServer extends Application {
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-
-    public Stage getPrimaryStage() {
-        return primaryStage;
     }
 
 
