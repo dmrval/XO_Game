@@ -3,7 +3,6 @@ package server;
 import static session.LineType.NO_FULL_LINES;
 
 import config.Cfg;
-import controller.GameBoardController;
 import decoder.DataHelper;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -50,18 +49,107 @@ public class XOServer extends Thread implements Winnable {
             log.info("Сервер получил " + i++ + " ход");
             ConsolePrint.printGameBoard(gameBoard);
             if (isWin()) {
+                log.info("Нажать любую клавишу для выхода");
+                cin.readLine();
                 break;
             }
-            //+++++ Ход сервера начало
-            // TODO: 23.06.2020 тут ходит SERVER
-            cin.readLine();
 
-//            setTestWin(gameBoard);
+            //+++++ Ход сервера начало
+            boolean correctInput;
+            do {
+                switch (cin.readLine()) {
+                    case "1":
+                        if (gameBoard.getCells()[0][0].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[0][0].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "2":
+                        if (gameBoard.getCells()[0][1].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[0][1].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "3":
+                        if (gameBoard.getCells()[0][2].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[0][2].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "4":
+                        if (gameBoard.getCells()[1][0].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[1][0].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "5":
+                        if (gameBoard.getCells()[1][1].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[1][1].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "6":
+                        if (gameBoard.getCells()[1][2].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[1][2].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "7":
+                        if (gameBoard.getCells()[2][0].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[2][0].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "8":
+                        if (gameBoard.getCells()[2][1].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[2][1].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    case "9":
+                        if (gameBoard.getCells()[2][2].getStatus() != Status.NONE) {
+                            log.info("КЛЕТКА УЖЕ ЗАНЯТА");
+                            correctInput = false;
+                            break;
+                        }
+                        gameBoard.getCells()[2][2].setStatus(Status.X);
+                        correctInput = true;
+                        break;
+                    default:
+                        correctInput = false;
+                }
+            } while (!correctInput);
             //+++++ Ход сервера конец
 
             gameBoard.setWhoseMove(WhoseMove.CLIENT);
             pushData();
             if (isWin()) {
+                log.info("Нажать любую клавишу для выхода");
+                cin.readLine();
                 break;
             }
             log.info("Сервер отправил " + i++ + "ход");
@@ -77,8 +165,8 @@ public class XOServer extends Thread implements Winnable {
         checkWinnerInGameBoard();
         if (fullLine.getLineType() != NO_FULL_LINES) {
             // TODO: 24.06.2020 тут надо продумать как записывать знак победителя
-            gameBoard.getWinnerMan().setWinnerMark(Status.X);
-            gameBoard.getWinnerMan().setWinner(WhoseMove.SERVER);
+            gameBoard.getWinnerMan().setWinnerMark(fullLine.getWinMark());
+            gameBoard.getWinnerMan().setWinner(gameBoard.getWinnerMan().getWinnerMark().equals(Status.O) ? WhoseMove.CLIENT : WhoseMove.SERVER);
             ConsolePrint.printActiveWinner(gameBoard, fullLine);
             pushData();
             return true;
@@ -99,6 +187,4 @@ public class XOServer extends Thread implements Winnable {
         packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
         socket.send(packet);
     }
-
-
 }
