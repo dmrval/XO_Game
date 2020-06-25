@@ -2,7 +2,6 @@ package session;
 
 import lombok.Data;
 import util.WhoseMove;
-
 import java.io.Serializable;
 
 @Data
